@@ -1,2 +1,2 @@
-Open-Terraria-Rewrite
+Open Terraria Rewrite
 =====================
