@@ -9,6 +9,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/(pl.shockah) EasySlick/libs/slick.jar" sourcepath="/Slick1/src"/>
-	<classpathentry kind="lib" path="/(pl.shockah) EasySlick/easyslick.jar" sourcepath="/(pl.shockah) EasySlick/src"/>
+	<classpathentry kind="src" path="/(pl.shockah) EasySlick"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
