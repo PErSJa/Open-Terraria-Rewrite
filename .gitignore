@@ -1,8 +1,7 @@
 Terraria Rewrite/bin/*
 Terraria Rewrite Mod - Terraria/bin/*
+
 *.class
 
-# Package Files #
-*.jar
-*.war
-*.ear
+Terraria Rewrite/terraria.jar
+Terraria Rewrite/mods/*
