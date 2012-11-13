@@ -12,7 +12,8 @@ public class FontLoader extends Loader<Font> {
 	public void run() {
 		File baseDir = new File("content","fonts");
 		try {
-			resourceManager.add(new File(baseDir,"AstersHand.ttf").getPath());
+			resourceManager.add(new File(baseDir,"AstersHand.ttf").getPath(),"size",32);
+			resourceManager.add(new File(baseDir,"AstersHand.ttf").getPath(),"size",16);
 		} catch (Exception e) {App.getApp().handle(e);}
 	}
 	public void postLoad() {}

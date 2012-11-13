@@ -7,8 +7,6 @@ import pl.shockah.Util;
 import pl.shockah.terraria.Vector2i;
 
 public class World {
-	public static final int TIME_DAY = 86400;
-	
 	public static World read(BinBuffer binb) throws WorldException {
 		World world = new World(WorldGen.tagMap.get(binb.readJavaString()),(int)binb.readUInt(),(int)binb.readUInt(),false);
 		
@@ -112,12 +110,15 @@ public class World {
 	public void updateTime(int by) {
 		time += by;
 		while (time < 0) {
-			time += TIME_DAY;
+			time += getDayTime();
 			day--;
 		}
-		while (time > TIME_DAY) {
-			time -= TIME_DAY;
+		while (time > getDayTime()) {
+			time -= getDayTime();
 			day++;
 		}
+	}
+	public int getDayTime() {
+		return 60*60*24;
 	}
 }
