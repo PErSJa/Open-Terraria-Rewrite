@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import pl.shockah.Config;
 import pl.shockah.Util;
 import pl.shockah.easyslick.App;
 import pl.shockah.easyslick.GraphicsHelper;
@@ -19,6 +20,8 @@ import pl.shockah.terraria.rooms.RoomLoading;
 import pl.shockah.terraria.world.World;
 
 public class Terraria implements IAppHooks {
+	public static final String version;
+	
 	public static final List<String> titles = Util.syncedList(String.class);
 	public static final List<ResourceManager<?>> managers = Collections.synchronizedList(new ArrayList<ResourceManager<?>>());
 	public static final ModManager managerMod = new ModManager(256);
@@ -28,6 +31,12 @@ public class Terraria implements IAppHooks {
 	public static List<World> worlds = Util.syncedList(World.class);
 	
 	static {
+		Config cfg = null;
+		try {
+			cfg = new Config().load(Terraria.class.getClassLoader().getResourceAsStream("buildinfo.cfg"));
+		} catch (Exception e) {App.getApp().handle(e);}
+		version = cfg == null ? null : "build #"+cfg.getInt("build")+", built on "+cfg.getString("dateText");
+		
 		titles.addAll(Arrays.asList(new String[]{
 				"Terraria: Dig Peon, Dig!",
 				"Terraria: Epic Dirt",

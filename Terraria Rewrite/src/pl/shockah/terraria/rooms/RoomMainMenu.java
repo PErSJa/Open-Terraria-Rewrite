@@ -47,7 +47,7 @@ public class RoomMainMenu extends Room {
 						gh.g().setFont(Terraria.managerFont.get(1));
 						Fonts.setFontAlign(Fonts.BottomLeft);
 						gh.g().setColor(Color.white);
-						Fonts.drawStringShadowed(gh,"Open Terraria Rewrite r1",pos.x,pos.y,Color.black);
+						Fonts.drawStringShadowed(gh,"Open Terraria Rewrite "+Terraria.version,pos.x,pos.y,Color.black);
 						Fonts.resetFontAlign();
 					} catch (Exception e) {App.getApp().handle(e);}
 				}
