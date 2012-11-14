@@ -27,6 +27,9 @@ public abstract class GuiMenuElButtonText extends GuiMenuEl {
 		this.text = text;
 	}
 	
+	protected void onCreate() {
+		scale = .75f;
+	}
 	protected void onTick(int delta) {
 		Fonts.setFontAlign(fontAlign);
 		Vector2f pos = Fonts.getActualStringXY(font,text,this.pos.x,this.pos.y);

@@ -1,5 +1,6 @@
 package pl.shockah.terraria;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,7 +68,35 @@ public class Terraria implements IAppHooks {
 	}
 	
 	public static void main(String[] args) {
+		setupLWJGL();
 		App.start(new Terraria(),new RoomLoading(),Util.getRandom(titles),false);
+	}
+	
+	private static void setupLWJGL() {
+		String osName = System.getProperty("os.name");
+		String nativeDir = "";
+		try {
+			nativeDir = new File(Terraria.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
+		} catch (Exception e) {
+			try {
+				e.printStackTrace();
+				nativeDir = new File(".").getCanonicalPath();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+				System.out.println("Failed to locate native library directory. Error:\n"+e2);
+				System.exit(-1);
+			}
+		}
+		nativeDir += File.separator+"libs"+File.separator;
+		if (osName.startsWith("Windows")) nativeDir += "windows";
+		else if (osName.startsWith("Linux") || osName.startsWith("FreeBSD")) nativeDir += "linux";
+		else if (osName.startsWith("Mac OS X")) nativeDir += "macosx";
+		else if (osName.startsWith("Solaris") || osName.startsWith("SunOS")) nativeDir += "solaris";
+		else {
+			System.out.println("Unsupported OS: "+osName+". Exiting.");
+			System.exit(-1);
+		}
+		System.setProperty("org.lwjgl.librarypath",nativeDir);
 	}
 	
 	public void onInit() {}

@@ -16,6 +16,8 @@ import pl.shockah.terraria.sentities.SEntityLogo;
 import pl.shockah.terraria.world.WorldBlank;
 
 public class RoomMainMenu extends Room {
+	protected GuiMenu main, settings, mods;
+	
 	protected void onCreate() {
 		try {
 			Terraria.worlds.add(new WorldBlank());
@@ -24,22 +26,53 @@ public class RoomMainMenu extends Room {
 			View view = View.getDefault();
 			new SEntityLogo().create(view.pos.x+view.size.x/2f,view.pos.y+96);
 			
-			GuiMenu guiMenu = new GuiMenu();
-			guiMenu.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Single-player"){
+			main = new GuiMenu();
+			main.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Single-player"){
 				protected void onButtonPressed() {}
 			});
-			guiMenu.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Multi-player"){
+			main.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Multi-player"){
 				protected void onButtonPressed() {}
 			});
-			guiMenu.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Settings"){
-				protected void onButtonPressed() {}
+			main.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Settings"){
+				protected void onButtonPressed() {
+					main.destroy();
+					settings.create();
+				}
 			});
-			guiMenu.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Exit"){
+			main.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Mods"){
+				protected void onButtonPressed() {
+					main.destroy();
+					mods.create();
+				}
+			});
+			main.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Exit"){
 				protected void onButtonPressed() {
 					App.stop();
 				}
 			});
-			guiMenu.create(new Vector2f(view.pos.x+view.size.x/2f,view.pos.y+192));
+			
+			settings = new GuiMenu();
+			settings.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Back"){
+				protected void onButtonPressed() {
+					settings.destroy();
+					main.create();
+				}
+			});
+			
+			mods = new GuiMenu();
+			mods.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Back"){
+				protected void onButtonPressed() {
+					mods.destroy();
+					main.create();
+				}
+			});
+			
+			Vector2f pos = new Vector2f(view.pos.x+view.size.x/2f,view.pos.y+192);
+			main.pos = pos.copy();
+			settings.pos = pos.copy();
+			mods.pos = pos.copy();
+			
+			main.create();
 			
 			new Entity(){
 				protected void onRender(GraphicsHelper gh) {
