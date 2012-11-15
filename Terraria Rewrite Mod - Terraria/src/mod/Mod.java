@@ -22,6 +22,13 @@ public class Mod extends pl.shockah.terraria.mods.Mod {
 		super("terraria");
 	}
 	
+	public String getTitle() {
+		return "Terraria";
+	}
+	public String getDescription() {
+		return "'Vanilla' Terraria content.";
+	}
+	
 	protected void onModLoad() {
 		mod = this;
 		

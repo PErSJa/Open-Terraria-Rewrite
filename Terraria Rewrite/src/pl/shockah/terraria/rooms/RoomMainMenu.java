@@ -11,6 +11,8 @@ import pl.shockah.easyslick.View;
 import pl.shockah.terraria.Terraria;
 import pl.shockah.terraria.gui.GuiMenu;
 import pl.shockah.terraria.gui.GuiMenuElButtonText;
+import pl.shockah.terraria.gui.GuiMenuElButtonTextOption;
+import pl.shockah.terraria.mods.Mod;
 import pl.shockah.terraria.sentities.SEntityBackgrounds;
 import pl.shockah.terraria.sentities.SEntityLogo;
 import pl.shockah.terraria.world.WorldBlank;
@@ -61,6 +63,16 @@ public class RoomMainMenu extends Room {
 			});
 			
 			mods = new GuiMenu();
+			for (Mod mod : Terraria.managerMod.getMods()) {
+				mods.list.add(new GuiMenuElButtonTextOption<Boolean>(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,mod.getTitle(),Mod.isModLoaded(mod)){
+					protected void onButtonPressed() {
+						value = !value;
+					}
+					protected String getValueText() {
+						return value ? "On" : "Off";
+					}
+				});
+			}
 			mods.list.add(new GuiMenuElButtonText(Terraria.managerFont.get(0),Fonts.MiddleCenter,Color.white,"Back"){
 				protected void onButtonPressed() {
 					mods.destroy();

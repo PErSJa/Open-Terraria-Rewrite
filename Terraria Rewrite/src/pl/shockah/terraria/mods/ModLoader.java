@@ -3,6 +3,8 @@ package pl.shockah.terraria.mods;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import pl.shockah.Config;
 import pl.shockah.easyslick.App;
 import pl.shockah.terraria.resources.Loader;
 import pl.shockah.terraria.resources.ResourceManager;
@@ -13,6 +15,11 @@ public class ModLoader extends Loader<Mod> {
 	}
 
 	public void run() {
+		Mod.config = new Config();
+		try {
+			Mod.config.load(new File("mods.cfg"));
+		} catch (Exception e) {App.getApp().handle(e);}
+		
 		File dirMods = new File("mods");
 		dirMods.mkdirs();
 		
