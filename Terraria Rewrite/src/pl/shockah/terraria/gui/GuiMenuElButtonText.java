@@ -3,21 +3,21 @@ package pl.shockah.terraria.gui;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.geom.Vector2f;
-
 import pl.shockah.easyslick.Colors;
+import pl.shockah.easyslick.EFontAlign;
 import pl.shockah.easyslick.Fonts;
 import pl.shockah.easyslick.GraphicsHelper;
 import pl.shockah.easyslick.Window;
 
 public abstract class GuiMenuElButtonText extends GuiMenuEl {
 	public final Font font;
-	public final int fontAlign;
+	public final EFontAlign fontAlign;
 	public final Color color;
 	public String text;
 	
 	protected float scale = .75f;
 	
-	public GuiMenuElButtonText(Font font, int fontAlign, Color color, String text) {
+	public GuiMenuElButtonText(Font font, EFontAlign fontAlign, Color color, String text) {
 		super();
 		checkCollision = false;
 		
