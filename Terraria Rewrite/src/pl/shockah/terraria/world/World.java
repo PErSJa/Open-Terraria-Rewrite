@@ -8,35 +8,41 @@ import pl.shockah.terraria.Vector2i;
 
 public class World {
 	public static World read(BinBuffer binb) throws WorldException {
-		World world = new World(WorldGen.tagMap.get(binb.readJavaString()),(int)binb.readUInt(),(int)binb.readUInt(),false);
-		
-		world.data.setPos(0);
-		world.data.writeBinBuffer(binb,world.width*world.height*2*2);
-		
-		int count;
-		
-		count = binb.readUShort();
-		while (count-- > 0) {
-			int id = binb.readUShort();
-			String tag = binb.readJavaString();
-			Tile tile = Tile.tagMap.get(tag);
-			if (tile == null) throw new WorldException("No tile with '"+tag+"' tag found. Are you missing a mod?");
-			world.idMapTiles.put(id,tile);
-			if (id > world.genMapTiles) world.genMapTiles = id;
+		String worldGenTag = binb.readJavaString();
+		for (WorldGen worldGen : WorldGen.worldGenList) {
+			if (worldGen.tag.equals(worldGenTag)) {
+				World world = new World(worldGen,(int)binb.readUInt(),(int)binb.readUInt(),false);
+				
+				world.data.setPos(0);
+				world.data.writeBinBuffer(binb,world.width*world.height*2*2);
+				
+				int count;
+				
+				count = binb.readUShort();
+				while (count-- > 0) {
+					int id = binb.readUShort();
+					String tag = binb.readJavaString();
+					Tile tile = Tile.tagMap.get(tag);
+					if (tile == null) throw new WorldException("No tile with '"+tag+"' tag found. Are you missing a mod?");
+					world.idMapTiles.put(id,tile);
+					if (id > world.genMapTiles) world.genMapTiles = id;
+				}
+				
+				count = binb.readUShort();
+				while (count-- > 0) {
+					int id = binb.readUShort();
+					String tag = binb.readJavaString();
+					Wall wall = Wall.tagMap.get(tag);
+					if (wall == null) throw new WorldException("No wall with '"+tag+"' tag found. Are you missing a mod?");
+					world.idMapWalls.put(id,wall);
+					if (id > world.genMapWalls) world.genMapWalls = id;
+				}
+				
+				world.generateMappings();
+				return world;
+			}
 		}
-		
-		count = binb.readUShort();
-		while (count-- > 0) {
-			int id = binb.readUShort();
-			String tag = binb.readJavaString();
-			Wall wall = Wall.tagMap.get(tag);
-			if (wall == null) throw new WorldException("No wall with '"+tag+"' tag found. Are you missing a mod?");
-			world.idMapWalls.put(id,wall);
-			if (id > world.genMapWalls) world.genMapWalls = id;
-		}
-		
-		world.generateMappings();
-		return world;
+		throw new WorldException("No world gen with '"+worldGenTag+"' tag found. Are you missing a mod?");
 	}
 	
 	protected Map<Integer,Tile> idMapTiles = Util.syncedMap(int.class,Tile.class);

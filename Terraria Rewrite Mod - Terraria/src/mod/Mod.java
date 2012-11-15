@@ -1,13 +1,17 @@
 package mod;
 
 import java.util.List;
-import mod.biomes.BiomeForest;
+
+import mod.game.BiomeForest;
+import mod.world.WorldGen;
 import pl.shockah.Util;
 import pl.shockah.easyslick.App;
 import pl.shockah.terraria.Terraria;
 import pl.shockah.terraria.game.Biome;
 
 public class Mod extends pl.shockah.terraria.mods.Mod {
+	public static Mod mod;
+	
 	public static List<Integer>
 		imageBack = Util.syncedList(Integer.class),
 		imageFar = Util.syncedList(Integer.class),
@@ -19,11 +23,15 @@ public class Mod extends pl.shockah.terraria.mods.Mod {
 	}
 	
 	protected void onModLoad() {
+		mod = this;
+		
 		Biome biome;
 		
 		biome = new BiomeForest();
 		biomes.add(biome);
 		Biome.biomeList.add(biome);
+		
+		WorldGen.register(new WorldGen());
 		
 		try {
 			for (int i = 1; i <= 1; i++) imageBack.add(Terraria.managerImage.add(getContentPath()+"images/background/back"+i+".png"));
@@ -33,5 +41,7 @@ public class Mod extends pl.shockah.terraria.mods.Mod {
 	}
 	protected void onModUnload() {
 		for (Biome biome : biomes) Biome.biomeList.remove(biome);
+		
+		mod = null;
 	}
 }

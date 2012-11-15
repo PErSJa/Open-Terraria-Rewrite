@@ -1,4 +1,4 @@
-package mod.biomes;
+package mod.game;
 
 import mod.Mod;
 import org.newdawn.slick.Color;

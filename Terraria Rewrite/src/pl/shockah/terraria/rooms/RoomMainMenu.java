@@ -14,13 +14,14 @@ import pl.shockah.terraria.gui.GuiMenuElButtonText;
 import pl.shockah.terraria.sentities.SEntityBackgrounds;
 import pl.shockah.terraria.sentities.SEntityLogo;
 import pl.shockah.terraria.world.WorldBlank;
+import pl.shockah.terraria.world.WorldGen;
 
 public class RoomMainMenu extends Room {
 	protected GuiMenu main, settings, mods;
 	
 	protected void onCreate() {
 		try {
-			Terraria.worlds.add(new WorldBlank());
+			Terraria.worlds.add(new WorldBlank(WorldGen.worldGenList.get(0)));
 			new SEntityBackgrounds().create();
 			
 			View view = View.getDefault();
