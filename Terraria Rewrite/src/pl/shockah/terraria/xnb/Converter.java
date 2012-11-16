@@ -1,4 +1,4 @@
-package pl.shockah.terraria.importer;
+package pl.shockah.terraria.xnb;
 
 import java.io.File;
 import pl.shockah.BinBuffer;
@@ -13,31 +13,31 @@ public class Converter {
 			BinBuffer binb = new BinFile(source).read();
 			binb.setPos(0);
 			
-			if (!binb.readChars(3).equals("XNB")) throw new ConvertException("Invalid file format.");
-			if (!binb.readChars(1).equals("w")) throw new ConvertException("Invalid platform.");
-			if (binb.readByte() != 5) throw new ConvertException("Unimplemented XNA version.");
-			if (binb.readByte() != 0) throw new ConvertException("Unimplemented profile.");
-			if ((int)binb.readUInt() != binb.getSize()) throw new ConvertException("File length mismatch.");
-			if (binb.readByte() != 1) throw new ConvertException("Too many types.");
-			if (!binb.readChars(binb.readByte()).equals("Microsoft.Xna.Framework.Content.SoundEffectReader")) throw new ConvertException("Wrong type reader name.");
-			if (binb.readInt() != 0) throw new ConvertException("Wrong type reader version.");
-			if (binb.readByte() != 0) throw new ConvertException("Too many shared resources.");
-			if (read7BitEncodedInt(binb) != 1) throw new ConvertException("???");
+			if (!binb.readChars(3).equals("XNB")) throw new XNBException("Invalid file format.");
+			if (!binb.readChars(1).equals("w")) throw new XNBException("Invalid platform.");
+			if (binb.readByte() != 5) throw new XNBException("Unimplemented XNA version.");
+			if (binb.readByte() != 0) throw new XNBException("Unimplemented profile.");
+			if ((int)binb.readUInt() != binb.getSize()) throw new XNBException("File length mismatch.");
+			if (binb.readByte() != 1) throw new XNBException("Too many types.");
+			if (!binb.readChars(binb.readByte()).equals("Microsoft.Xna.Framework.Content.SoundEffectReader")) throw new XNBException("Wrong type reader name.");
+			if (binb.readInt() != 0) throw new XNBException("Wrong type reader version.");
+			if (binb.readByte() != 0) throw new XNBException("Too many shared resources.");
+			if (read7BitEncodedInt(binb) != 1) throw new XNBException("???");
 			
 			long nSamplesPerSec, nAvgBytesPerSec;
 			int wFormatTag, nChannels, nBlockAlign, wBitsPerSample, dataChunkSize;
 			BinBuffer waveData = new BinBuffer();
 			
-			if (binb.readUInt() != 18) throw new ConvertException("Wrong format chunk size.");
-			if ((wFormatTag = binb.readUShort()) != 1) throw new ConvertException("Unimplemented WAV codec (must be PCM).");
+			if (binb.readUInt() != 18) throw new XNBException("Wrong format chunk size.");
+			if ((wFormatTag = binb.readUShort()) != 1) throw new XNBException("Unimplemented WAV codec (must be PCM).");
 			nChannels = binb.readUShort();
 			nSamplesPerSec = binb.readUInt();
 			nAvgBytesPerSec = binb.readUInt();
 			nBlockAlign = binb.readUShort();
 			wBitsPerSample = binb.readUShort();
 			
-			if (nAvgBytesPerSec != nSamplesPerSec*nChannels*(wBitsPerSample/8)) throw new ConvertException("Average bytes per second number incorrect.");
-			if (nBlockAlign != nChannels*(wBitsPerSample/8)) throw new ConvertException("Block align number incorrect.");
+			if (nAvgBytesPerSec != nSamplesPerSec*nChannels*(wBitsPerSample/8)) throw new XNBException("Average bytes per second number incorrect.");
+			if (nBlockAlign != nChannels*(wBitsPerSample/8)) throw new XNBException("Block align number incorrect.");
 			binb.setPos(binb.getPos()+2);
 			
 			waveData.writeBinBuffer(binb,dataChunkSize = binb.readInt());
@@ -74,11 +74,11 @@ public class Converter {
 			BinBuffer binb = new BinFile(source).read();
 			binb.setPos(0);
 			
-			if (!binb.readChars(3).equals("XNB")) throw new ConvertException("Invalid file format.");
-			if (!binb.readChars(1).equals("w")) throw new ConvertException("Invalid platform.");
-			if (binb.readByte() != 5) throw new ConvertException("Unimplemented XNA version.");
-			if (binb.readByte() != 128) throw new ConvertException("Unimplemented profile.");
-			if ((int)binb.readUInt() != binb.getSize()) throw new ConvertException("File length mismatch.");
+			if (!binb.readChars(3).equals("XNB")) throw new XNBException("Invalid file format.");
+			if (!binb.readChars(1).equals("w")) throw new XNBException("Invalid platform.");
+			if (binb.readByte() != 5) throw new XNBException("Unimplemented XNA version.");
+			if (binb.readByte() != 128) throw new XNBException("Unimplemented profile.");
+			if ((int)binb.readUInt() != binb.getSize()) throw new XNBException("File length mismatch.");
 			
 			//TODO: implement XNB -> PNG conversion [ http://xbox.create.msdn.com/en-US/sample/xnb_format ]
 		} catch (Exception e) {App.getApp().handle(e);}
