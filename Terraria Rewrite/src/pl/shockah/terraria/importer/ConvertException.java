@@ -1,9 +1,9 @@
 package pl.shockah.terraria.importer;
 
-public class ImportException extends Exception {
+public class ConvertException extends Exception {
 	private static final long serialVersionUID = 21766770443643750L;
 
-	public ImportException(String message) {
+	public ConvertException(String message) {
 		super(message);
 	}
 }
