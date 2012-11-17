@@ -1,99 +1,50 @@
 package pl.shockah.terraria.xnb;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import org.newdawn.slick.imageout.ImageOut;
 import pl.shockah.BinBuffer;
 import pl.shockah.BinFile;
 import pl.shockah.easyslick.App;
+import pl.shockah.easyslick.Image;
 
-public class Converter {
-	public static File convertWAV(File source) {return convertWAV(source,null);}
-	public static File convertWAV(File source, File destination) {
+public final class Converter {
+	public static File convertTexture2D(File source) {
+		return convertTexture2D(source,null);
+	}
+	public static File convertTexture2D(File source, File target) {
 		try {
-			if (destination == null) destination = File.createTempFile(source.getName(),".wav");
-			BinBuffer binb = new BinFile(source).read();
-			binb.setPos(0);
+			if (target == null) target = File.createTempFile(source.getName(),".png");
 			
-			if (!binb.readChars(3).equals("XNB")) throw new XNBException("Invalid file format.");
-			if (!binb.readChars(1).equals("w")) throw new XNBException("Invalid platform.");
-			if (binb.readByte() != 5) throw new XNBException("Unimplemented XNA version.");
-			if (binb.readByte() != 0) throw new XNBException("Unimplemented profile.");
-			if ((int)binb.readUInt() != binb.getSize()) throw new XNBException("File length mismatch.");
-			if (binb.readByte() != 1) throw new XNBException("Too many types.");
-			if (!binb.readChars(binb.readByte()).equals("Microsoft.Xna.Framework.Content.SoundEffectReader")) throw new XNBException("Wrong type reader name.");
-			if (binb.readInt() != 0) throw new XNBException("Wrong type reader version.");
-			if (binb.readByte() != 0) throw new XNBException("Too many shared resources.");
-			if (read7BitEncodedInt(binb) != 1) throw new XNBException("???");
+			XNBReader xnbReader = new XNBReader(source);
+			XNBData read = xnbReader.read(true);
 			
-			long nSamplesPerSec, nAvgBytesPerSec;
-			int wFormatTag, nChannels, nBlockAlign, wBitsPerSample, dataChunkSize;
-			BinBuffer waveData = new BinBuffer();
+			Image image = (Image)read.assetData;
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(target));
+			ImageOut.write(image,ImageOut.PNG,bos);
+			bos.close();
 			
-			if (binb.readUInt() != 18) throw new XNBException("Wrong format chunk size.");
-			if ((wFormatTag = binb.readUShort()) != 1) throw new XNBException("Unimplemented WAV codec (must be PCM).");
-			nChannels = binb.readUShort();
-			nSamplesPerSec = binb.readUInt();
-			nAvgBytesPerSec = binb.readUInt();
-			nBlockAlign = binb.readUShort();
-			wBitsPerSample = binb.readUShort();
-			
-			if (nAvgBytesPerSec != nSamplesPerSec*nChannels*(wBitsPerSample/8)) throw new XNBException("Average bytes per second number incorrect.");
-			if (nBlockAlign != nChannels*(wBitsPerSample/8)) throw new XNBException("Block align number incorrect.");
-			binb.setPos(binb.getPos()+2);
-			
-			waveData.writeBinBuffer(binb,dataChunkSize = binb.readInt());
-			
-			
-			
-			binb.clear();
-			waveData.setPos(0);
-			binb.writeChars("RIFF");
-			binb.writeInt(dataChunkSize+36);
-			binb.writeChars("WAVE");
-			binb.writeChars("fmt ");
-			binb.writeInt(16);
-			binb.writeUShort(wFormatTag);
-			binb.writeUShort(nChannels);
-			binb.writeUInt(nSamplesPerSec);
-			binb.writeUInt(nAvgBytesPerSec);
-			binb.writeUShort(nBlockAlign);
-			binb.writeUShort(wBitsPerSample);
-			binb.writeChars("data");
-			binb.writeInt(dataChunkSize);
-			binb.writeBinBuffer(waveData);
-			
-			binb.setPos(0);
-			new BinFile(destination).write(binb);
+			return target;
 		} catch (Exception e) {App.getApp().handle(e);}
 		return null;
 	}
 	
-	public static File convertPNG(File source) {return convertPNG(source,null);}
-	public static File convertPNG(File source, File destination) {
+	public static File convertSoundEffect(File source) {
+		return convertSoundEffect(source,null);
+	}
+	public static File convertSoundEffect(File source, File target) {
 		try {
-			if (destination == null) destination = File.createTempFile(source.getName(),".png");
-			BinBuffer binb = new BinFile(source).read();
-			binb.setPos(0);
+			if (target == null) target = File.createTempFile(source.getName(),".wav");
 			
-			if (!binb.readChars(3).equals("XNB")) throw new XNBException("Invalid file format.");
-			if (!binb.readChars(1).equals("w")) throw new XNBException("Invalid platform.");
-			if (binb.readByte() != 5) throw new XNBException("Unimplemented XNA version.");
-			if (binb.readByte() != 128) throw new XNBException("Unimplemented profile.");
-			if ((int)binb.readUInt() != binb.getSize()) throw new XNBException("File length mismatch.");
+			XNBReader xnbReader = new XNBReader(source);
+			XNBData read = xnbReader.read(true);
 			
-			//TODO: implement XNB -> PNG conversion [ http://xbox.create.msdn.com/en-US/sample/xnb_format ]
+			BinBuffer binb = (BinBuffer)read.assetData;
+			new BinFile(target).write(binb);
+			
+			return target;
 		} catch (Exception e) {App.getApp().handle(e);}
 		return null;
-	}
-	
-	//TODO: implement XNB -> font conversion [ http://xbox.create.msdn.com/en-US/sample/xnb_format ]
-	
-	private static int read7BitEncodedInt(BinBuffer binb) {
-	    int result = 0, bitsRead = 0, value;
-	    do {
-	        value = binb.readByte();
-	        result |= (value & 0x7f) << bitsRead;
-	        bitsRead += 7;
-	    } while ((value & 0x80) != 0);
-	    return result;
 	}
 }

@@ -31,6 +31,10 @@ public class XNBReader {
 		readers.add(new XNBColorReader());
 		
 		readers.add(new XNBTexture2DReader());
+		
+		readers.add(new XNBSpriteFontReader());
+		
+		readers.add(new XNBSoundEffectReader());
 	}
 	
 	public static XNBObjectReader<?> getObjectReader(String type) {
