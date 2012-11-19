@@ -35,6 +35,8 @@ public class XNBReader {
 		readers.add(new XNBSpriteFontReader());
 		
 		readers.add(new XNBSoundEffectReader());
+		
+		System.loadLibrary("lzx");
 	}
 	
 	public static XNBObjectReader<?> getObjectReader(String type) {
@@ -114,4 +116,6 @@ public class XNBReader {
 	    } while ((value & 0x80) != 0);
 	    return result;
 	}
+	
+	protected native byte[] nativeDecompressLZX(byte[] bytes);
 }
