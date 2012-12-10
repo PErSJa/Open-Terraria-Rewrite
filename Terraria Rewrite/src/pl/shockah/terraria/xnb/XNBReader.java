@@ -9,6 +9,7 @@ import java.util.List;
 import pl.shockah.BinBuffer;
 import pl.shockah.BinFile;
 import pl.shockah.Pair;
+import pl.shockah.easyslick.App;
 
 public class XNBReader {
 	private static final List<XNBObjectReader<?>> readers = Collections.synchronizedList(new ArrayList<XNBObjectReader<?>>());
@@ -65,10 +66,26 @@ public class XNBReader {
 		int b = binb.readByte();
 		data.flagHiDef = (b & 0x01) != 0;
 		data.flagCompressed = (b & 0x80) != 0;
-		if (strict && data.flagCompressed) throw new XNBException("Unimplemented flag.");
 		
 		data.sizeTotal = (int)binb.readUInt();
-		if (data.flagCompressed) data.sizeDecompressed = (int)binb.readUInt();
+		if (strict && data.sizeTotal != binb.getSize()) throw new XNBException("Corrupted file.");
+		
+		if (data.flagCompressed) {
+			data.sizeDecompressed = (int)binb.readUInt();
+			
+			File temp = File.createTempFile("unlzx",".lzx");
+			BinFile binf = new BinFile(temp);
+			binf.write(binb);
+			
+			try {
+				Runtime.getRuntime().exec(new File("unlzx","unlzx.exe").getAbsolutePath(),new String[]{temp.getAbsolutePath()}).waitFor();
+			} catch (Exception e) {App.getApp().handle(e);}
+			
+			binb = binf.read();
+			binb.setPos(0);
+			
+			if (strict && data.sizeDecompressed != binb.getSize()) throw new XNBException("Corrupted file.");
+		}
 		
 		int count;
 		
