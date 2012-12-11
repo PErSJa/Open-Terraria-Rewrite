@@ -17,7 +17,7 @@ public class FontManager extends ResourceManager<Font> {
 
 	public Font loadResource(String path, Object... info) {
 		try {
-			if (path.matches(ModManager.patternModProtocol.toString())) path = ModManager.unpackModFile(path).getAbsolutePath();
+			path = ModManager.getPath(path);
 			
 			int size = 12;
 			boolean bold = false, italic = false;
