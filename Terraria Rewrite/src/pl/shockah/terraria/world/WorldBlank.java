@@ -5,7 +5,7 @@ import pl.shockah.easyslick.App;
 import pl.shockah.terraria.Vector2i;
 
 public class WorldBlank extends World {
-	public WorldBlank(WorldGen worldGen) {
+	public WorldBlank(WorldGen<? extends WorldBlank> worldGen) {
 		super(worldGen,0,0);
 	}
 	

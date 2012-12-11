@@ -38,7 +38,7 @@ public class Mod extends pl.shockah.terraria.mods.Mod {
 		biomes.add(biome);
 		Biome.biomeList.add(biome);
 		
-		WorldGen.register(new WorldGen());
+		new WorldGen().register();
 		
 		try {
 			for (int i = 1; i <= 1; i++) imageBack.add(Terraria.managerImage.add(getContentPath()+"images/background/back"+i+".png"));

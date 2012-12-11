@@ -2,6 +2,7 @@ package pl.shockah.terraria.rooms;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Vector2f;
+
 import pl.shockah.easyslick.App;
 import pl.shockah.easyslick.EFontAlign;
 import pl.shockah.easyslick.Entity;
@@ -15,7 +16,6 @@ import pl.shockah.terraria.gui.GuiMenuElButtonTextOption;
 import pl.shockah.terraria.mods.Mod;
 import pl.shockah.terraria.sentities.SEntityBackgrounds;
 import pl.shockah.terraria.sentities.SEntityLogo;
-import pl.shockah.terraria.world.WorldBlank;
 import pl.shockah.terraria.world.WorldGen;
 
 public class RoomMainMenu extends Room {
@@ -23,7 +23,7 @@ public class RoomMainMenu extends Room {
 	
 	protected void onCreate() {
 		try {
-			Terraria.worlds.add(new WorldBlank(WorldGen.worldGenList.get(0)));
+			Terraria.worlds.add(WorldGen.worldGenList.get(0).generateWorld());
 			new SEntityBackgrounds().create();
 			
 			View view = View.getDefault();

@@ -9,7 +9,7 @@ import pl.shockah.terraria.Vector2i;
 public class World {
 	public static World read(BinBuffer binb) throws WorldException {
 		String worldGenTag = binb.readJavaString();
-		for (WorldGen worldGen : WorldGen.worldGenList) {
+		for (WorldGen<? extends World> worldGen : WorldGen.worldGenList) {
 			if (worldGen.tag.equals(worldGenTag)) {
 				World world = new World(worldGen,(int)binb.readUInt(),(int)binb.readUInt(),false);
 				
@@ -48,7 +48,7 @@ public class World {
 	protected Map<Integer,Tile> idMapTiles = Util.syncedMap(int.class,Tile.class);
 	protected Map<Integer,Wall> idMapWalls = Util.syncedMap(int.class,Wall.class);
 	
-	protected final WorldGen worldGen;
+	protected final WorldGen<? extends World> worldGen;
 	protected final BinBuffer data;
 	protected final int width, height;
 	
@@ -56,10 +56,10 @@ public class World {
 	
 	public int day = 0, time = 0;
 	
-	protected World(WorldGen worldGen, int w, int h) {
+	protected World(WorldGen<? extends World> worldGen, int w, int h) {
 		this(worldGen,w,h,true);
 	}
-	protected World(WorldGen worldGen, int w, int h, boolean genMappings) {
+	protected World(WorldGen<? extends World> worldGen, int w, int h, boolean genMappings) {
 		this.worldGen = worldGen;
 		data = new BinBuffer(w*h*2*2);
 		width = w;
