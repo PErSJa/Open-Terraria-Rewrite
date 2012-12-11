@@ -33,6 +33,9 @@
 #ifdef WIN32
 #include <direct.h>
 #include <string.h>
+#else
+#include <unistd.h>
+#include <sys/stat.h>
 #endif
 
 /* ---------------------------------------------------------------------- */
