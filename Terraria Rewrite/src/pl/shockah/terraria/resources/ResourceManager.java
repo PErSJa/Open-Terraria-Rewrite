@@ -4,9 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipFile;
+
 import pl.shockah.easyslick.App;
 import pl.shockah.terraria.Terraria;
 import pl.shockah.terraria.mods.Mod;
@@ -71,35 +75,31 @@ public abstract class ResourceManager<T> {
 		}
 	}
 	
-	protected ResourceEntry<T>[] resources;
+	protected List<ResourceEntry<T>> resources;
 	protected Loader<T> loader;
 	
-	public ResourceManager(int resources) {
-		this(resources,null);
+	public ResourceManager() {
+		this(null);
 	}
-	@SuppressWarnings("unchecked") public ResourceManager(int resources, Loader<T> loader) {
-		this.resources = new ResourceEntry[resources];
+	public ResourceManager(Loader<T> loader) {
+		this.resources = Collections.synchronizedList(new ArrayList<ResourceEntry<T>>());
 		this.loader = loader;
 	}
 	
 	public int add(String path, Object... data) throws ResourceException {
-		for (int i = 0; i < resources.length; i++) if (resources[i] == null) {
-			resources[i] = new ResourceEntry<T>(path,data);
-			return i;
-		}
-		throw new ResourceException("No more free resource IDs.");
+		resources.add(new ResourceEntry<T>(path,data));
+		return resources.size()-1;
 	}
 	public T get(int i) throws ResourceException {
-		if (resources[i] == null) throw new ResourceException("No resource with specified ID.");
-		return resources[i].get();
+		return resources.get(i).get();
 	}
 	
 	public void setLoader(Loader<T> loader) {
 		this.loader = loader;
 	}
 	public boolean updateLoading() {
-		for (int i = 0; i < resources.length; i++) if (resources[i] != null && resources[i].get() == null) {
-			resources[i].load();
+		for (int i = 0; i < resources.size(); i++) if (resources.get(i).get() == null) {
+			resources.get(i).load();
 			return false;
 		}
 		if (loader != null) {
@@ -116,9 +116,9 @@ public abstract class ResourceManager<T> {
 	public Progress getProgress() {
 		int loaded = 0, total = 0;
 		String text = null;
-		for (int i = 0; i < resources.length; i++) if (resources[i] != null) {
+		for (int i = 0; i < resources.size(); i++) {
 			total++;
-			if (resources[i].get() != null) loaded++; else if (text == null) text = resources[i].path;
+			if (resources.get(i).get() != null) loaded++; else if (text == null) text = resources.get(i).path;
 		}
 		return new Progress(1d*loaded/total,text);
 	}

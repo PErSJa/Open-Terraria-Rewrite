@@ -8,11 +8,11 @@ import pl.shockah.easyslick.Fonts;
 import pl.shockah.terraria.mods.ModManager;
 
 public class FontManager extends ResourceManager<Font> {
-	public FontManager(int resources) {
-		this(resources,null);
+	public FontManager() {
+		this(null);
 	}
-	public FontManager(int resources, Loader<Font> loader) {
-		super(resources,loader);
+	public FontManager(Loader<Font> loader) {
+		super(loader);
 	}
 
 	public Font loadResource(String path, Object... info) {
@@ -38,8 +38,8 @@ public class FontManager extends ResourceManager<Font> {
 	public Font get(String name, Integer size) {return get(name,size,null,null);}
 	public Font get(String name, Integer size, Boolean bold, Boolean italic) {
 		Pattern pattern = Pattern.compile("[\\/]?(?:[^\\/]+[\\/])*([^\\/]+)\\.[a-zA-Z0-9]+");
-		for (int i = 0; i < resources.length; i++) {
-			ResourceEntry<Font> entry = resources[i];
+		for (int i = 0; i < resources.size(); i++) {
+			ResourceEntry<Font> entry = resources.get(i);
 			Matcher matcher = pattern.matcher(entry.path);
 			if (!matcher.find() || !matcher.group(1).equalsIgnoreCase(name)) continue;
 			

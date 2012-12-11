@@ -5,11 +5,11 @@ import pl.shockah.easyslick.Image;
 import pl.shockah.terraria.mods.ModManager;
 
 public class ImageManager extends ResourceManager<Image> {
-	public ImageManager(int resources) {
-		this(resources,null);
+	public ImageManager() {
+		this(null);
 	}
-	public ImageManager(int resources, Loader<Image> loader) {
-		super(resources,loader);
+	public ImageManager(Loader<Image> loader) {
+		super(loader);
 	}
 
 	public Image loadResource(String path, Object... info) {

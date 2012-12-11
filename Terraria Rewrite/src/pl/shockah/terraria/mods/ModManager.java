@@ -37,11 +37,11 @@ public class ModManager extends ResourceManager<Mod> {
 		return new URLClassLoader(list.toArray(new URL[list.size()]),ModManager.class.getClassLoader());
 	}
 	
-	public ModManager(int resources) {
-		this(resources,null);
+	public ModManager() {
+		this(null);
 	}
-	public ModManager(int resources, Loader<Mod> loader) {
-		super(resources,loader);
+	public ModManager(Loader<Mod> loader) {
+		super(loader);
 	}
 	
 	public Mod loadResource(String path, Object... info) {

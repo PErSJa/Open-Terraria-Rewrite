@@ -25,9 +25,9 @@ public class Terraria implements IAppHooks {
 	
 	public static final List<String> titles = Util.syncedList(String.class);
 	public static final List<ResourceManager<?>> managers = Collections.synchronizedList(new ArrayList<ResourceManager<?>>());
-	public static final ModManager managerMod = new ModManager(256);
-	public static final ImageManager managerImage = new ImageManager(256);
-	public static final FontManager managerFont = new FontManager(4);
+	public static final ModManager managerMod = new ModManager();
+	public static final ImageManager managerImage = new ImageManager();
+	public static final FontManager managerFont = new FontManager();
 	
 	public static List<World> worlds = Util.syncedList(World.class);
 	
