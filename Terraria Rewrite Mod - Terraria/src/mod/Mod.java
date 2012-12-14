@@ -1,7 +1,6 @@
 package mod;
 
 import java.util.List;
-
 import mod.game.BiomeForest;
 import mod.world.WorldGen;
 import pl.shockah.Util;

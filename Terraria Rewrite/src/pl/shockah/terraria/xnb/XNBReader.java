@@ -36,8 +36,6 @@ public class XNBReader {
 		readers.add(new XNBSpriteFontReader());
 		
 		readers.add(new XNBSoundEffectReader());
-		
-		System.loadLibrary("lzx");
 	}
 	
 	public static XNBObjectReader<?> getObjectReader(String type) {
@@ -55,6 +53,7 @@ public class XNBReader {
 		XNBData data = new XNBData();
 		
 		BinBuffer binb = new BinFile(file).read();
+		binb.setPos(0);
 		if (!binb.readChars(3).equals("XNB")) throw new XNBException("Invalid file format.");
 		
 		data.targetPlatform = ETargetPlatform.getByChar((char)binb.readByte());
@@ -73,16 +72,34 @@ public class XNBReader {
 		if (data.flagCompressed) {
 			data.sizeDecompressed = (int)binb.readUInt();
 			
-			File temp = File.createTempFile("unlzx",".lzx");
-			BinFile binf = new BinFile(temp);
-			binf.write(binb);
-			
 			try {
-				Runtime.getRuntime().exec(new File("unlzx","unlzx.exe").getAbsolutePath(),new String[]{temp.getAbsolutePath()}).waitFor();
-			} catch (Exception e) {App.getApp().handle(e);}
-			
-			binb = binf.read();
-			binb.setPos(0);
+				LZXDecoder decoder = new LZXDecoder(16);
+				BinBuffer binb2 = new BinBuffer();
+				int pos = binb.getPos();
+				while (binb.bytesLeft() > 0) {
+					int hi, lo, block_size, frame_size;
+					hi = binb.readByte();
+					
+					if (hi == 0xFF) {
+                        hi = binb.readByte();
+                        lo = binb.readByte();
+                        frame_size = (hi << 8) | lo;
+                        hi = binb.readByte();
+                        lo = binb.readByte();
+                        block_size = (hi << 8) | lo;
+                    } else {
+                        lo = binb.readByte();
+                        block_size = (hi << 8) | lo;
+                        frame_size = 32768;
+                    }
+					
+					if (block_size == 0 || frame_size == 0) break;
+					decoder.Decompress(binb,block_size,binb2,frame_size);
+					binb.setPos(pos);
+				}
+				binb2.setPos(0);
+				binb = binb2;
+			} catch (LZXException e) {App.getApp().handle(e);}
 			
 			if (strict && data.sizeDecompressed != binb.getSize()) throw new XNBException("Corrupted file.");
 		}
@@ -98,18 +115,17 @@ public class XNBReader {
 		if (strict && count > 0) throw new XNBException("Too many shared resources.");
 		
 		XNBObjectReader<?> reader = getObjectReader(data.readers.get(0).get1());
-		if (reader == null) throw new XNBException("No applicable readers.");
+		if (reader == null) throw new XNBException("No applicable readers for "+data.readers.get(0).get1()+".");
 		
 		data.assetData = reader.read(binb);
 		while (count-- > 0) data.sharedResources.add(reader.read(binb));
 		return data;
 	}
 	
-	protected static String readCSharpString(BinBuffer binb) {
-		int length = read7BitEncodedInt(binb);
-		StringBuilder sb = new StringBuilder();
-		while (length-- > 0) sb.append(readCSharpChar(binb));
-		return sb.toString();
+	protected String readCSharpString(BinBuffer binb) {
+		byte[] buffer = new byte[read7BitEncodedInt(binb)];
+		for (int i = 0; i < buffer.length; i++) buffer[i] = (byte)binb.readSByte();
+		return new String(buffer);
 	}
 	protected static char readCSharpChar(BinBuffer binb) {
 		char result = (char)binb.readByte();
@@ -125,13 +141,13 @@ public class XNBReader {
 		return result;
 	}
 	protected static int read7BitEncodedInt(BinBuffer binb) {
-	    int result = 0, bitsRead = 0, value;
-	    do {
-	        value = binb.readByte();
-	        result |= (value & 0x7f) << bitsRead;
-	        bitsRead += 7;
-	    } while ((value & 0x80) != 0);
-	    return result;
+	    int result = 0, bitsRead = 0;
+	    while (true) {
+	    	int value = binb.readByte();
+	    	result += (value%128) << bitsRead;
+	    	bitsRead += 7;
+	    	if (result <= 127) return result;
+	    }
 	}
 	
 	protected native byte[] nativeDecompressLZX(byte[] bytes);

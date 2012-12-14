@@ -28,6 +28,9 @@ public abstract class Mod {
 	public final String getContentPath() {
 		return "mod://"+name+"/content/";
 	}
+	public final String getDataPath() {
+		return "modd://"+name+"/";
+	}
 	
 	public abstract String getTitle();
 	public abstract String getDescription();
